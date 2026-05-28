@@ -1,15 +1,26 @@
 from datetime import datetime
-import re
 
 class User:
-    def __init__(self, username, email, role) -> None:
-        pass
+    def __init__(self, username, email, role):
+        self.id = None
+        self.username = username
+        self.email = email
+        self.role = role  # 'admin', 'manager', 'developer'
+        self.registration_date = datetime.now()
 
-    def _is_valid_email(self, email) -> bool:
-        pass
+    def update_info(self, username=None, email=None, role=None):
+        if username is not None:
+            self.username = username
+        if email is not None:
+            self.email = email
+        if role is not None:
+            self.role = role
 
-    def update_info(self, username=None, email=None, role=None) -> None:
-        pass
-
-    def to_dict(self) -> dict:
-        pass
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'role': self.role,
+            'registration_date': self.registration_date.isoformat() if isinstance(self.registration_date, datetime) else self.registration_date
+        }

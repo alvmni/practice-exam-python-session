@@ -1,3 +1,16 @@
+import pytest
+import sys
+import os
+import tempfile
+from datetime import datetime, timedelta
+from database.database_manager import DatabaseManager
+from controllers.user_controller import UserController
+from controllers.project_controller import ProjectController
+from controllers.task_controller import TaskController
+
+from models.user import User
+from models.project import Project
+from models.task import Task
 class TestUserController:
     """Тесты для UserController"""
 

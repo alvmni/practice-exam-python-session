@@ -5,12 +5,15 @@ from datetime import datetime, timedelta
 import tempfile
 from database.database_manager import DatabaseManager
 
-# Добавляем путь к модулям проекта
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from controllers.task_controller import TaskController
 from controllers.project_controller import ProjectController
 from controllers.user_controller import UserController
+
+from models.project import Project
+from models.user import User
+from models.task import Task
 
 
 class TestTaskController:
@@ -23,7 +26,6 @@ class TestTaskController:
         self.db_manager.create_tables()
         self.controller = TaskController(self.db_manager)
 
-        # Создаем тестовые проекты и пользователей
         self.project_id = self.db_manager.add_project(
             Project("Тестовый проект", "Описание проекта", datetime.now(), datetime.now() + timedelta(days=30))
         )
@@ -49,7 +51,6 @@ class TestTaskController:
         assert task_id is not None
         assert isinstance(task_id, int)
 
-        # Проверяем, что задача действительно добавлена
         task = self.controller.get_task(task_id)
         assert task.title == "Тестовая задача"
         assert task.description == "Описание тестовой задачи"
@@ -73,7 +74,6 @@ class TestTaskController:
 
     def test_get_all_tasks(self):
         """Тест получения всех задач"""
-        # Добавляем несколько задач
         self.controller.add_task("Задача 1", "Описание 1", 1, datetime.now() + timedelta(days=1), self.project_id,
                                  self.user_id)
         self.controller.add_task("Задача 2", "Описание 2", 2, datetime.now() + timedelta(days=2), self.project_id,
@@ -82,7 +82,6 @@ class TestTaskController:
         tasks = self.controller.get_all_tasks()
         assert len(tasks) >= 2
 
-        # Проверяем, что все задачи имеют необходимые атрибуты
         for task in tasks:
             assert hasattr(task, "id")
             assert hasattr(task, "title")
@@ -99,7 +98,6 @@ class TestTaskController:
             self.user_id
         )
 
-        # Обновляем задачу
         self.controller.update_task(
             task_id,
             title="Новое название",
@@ -107,7 +105,6 @@ class TestTaskController:
             priority=3
         )
 
-        # Проверяем изменения
         task = self.controller.get_task(task_id)
         assert task.title == "Новое название"
         assert task.description == "Новое описание"
@@ -124,10 +121,8 @@ class TestTaskController:
             self.user_id
         )
 
-        # Удаляем задачу
         self.controller.delete_task(task_id)
 
-        # Проверяем, что задача удалена
         task = self.controller.get_task(task_id)
         assert task is None
 
@@ -138,11 +133,9 @@ class TestTaskController:
         self.controller.add_task("Обычная задача", "Плановое выполнение", 2, datetime.now() + timedelta(days=2),
                                  self.project_id, self.user_id)
 
-        # Поиск по названию
         results = self.controller.search_tasks("Важная")
         assert len(results) >= 1
 
-        # Поиск по описанию
         results = self.controller.search_tasks("Срочное")
         assert len(results) >= 1
 
@@ -157,21 +150,17 @@ class TestTaskController:
             self.user_id
         )
 
-        # Обновляем статус
         self.controller.update_task_status(task_id, "in_progress")
 
-        # Проверяем изменения
         task = self.controller.get_task(task_id)
         assert task.status == "in_progress"
 
-        # Обновляем на завершенный
         self.controller.update_task_status(task_id, "completed")
         task = self.controller.get_task(task_id)
         assert task.status == "completed"
 
     def test_get_overdue_tasks(self):
         """Тест получения просроченных задач"""
-        # Создаем просроченную задачу
         task_id = self.controller.add_task(
             "Просроченная задача",
             "Описание",

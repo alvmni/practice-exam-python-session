@@ -1,3 +1,10 @@
+import os
+import tempfile
+from datetime import datetime, timedelta
+from database.database_manager import DatabaseManager
+from controllers.project_controller import ProjectController
+from controllers.task_controller import TaskController
+from models.user import User
 class TestProjectController:
     """Тесты для ProjectController"""
 
